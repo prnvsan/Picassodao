@@ -4,16 +4,20 @@ import { Row, Form, Button } from 'react-bootstrap'
 import { create } from 'ipfs-http-client'
 import { Buffer } from 'buffer';
 
+const ipfsClient = require('ipfs-http-client');
+
+const projectId = '2NHRYiV1np1A4h6SBJteWAm10XZ';
+const projectSecret = '993275b3603bd4a32088a19d6cf7c9d0';
 const auth =
-    'Basic ' + Buffer.from('2NHRYiV1np1A4h6SBJteWAm10XZ' + ':' + '993275b3603bd4a32088a19d6cf7c9d0').toString('base64');
+    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
     
 const client = create({
     host: 'ipfs.infura.io:5001',
     port: 5001,
     protocol: 'https',
-    // headers: {
-    //     authorization: auth,
-    // },
+    headers: {
+        authorization: auth,
+    },
     "Access-Control-Allow-Origin": [
       "*"
     ]
@@ -33,8 +37,8 @@ const Create = ({ marketplace, nft }) => {
       try {
         const result = await client.add(file)
         console.log(result)
-        setImage(`https://ipfs.infura.io/ipfs/${result.path}`)
-        // setImage(`https://piccasodao.infura-ipfs.io/ipfs/${result.path}`)
+        // setImage(`https://ipfs.infura.io/ipfs/${result.path}`)
+        setImage(`https://piccasodao.infura-ipfs.io/ipfs/${result.path}`)
       } catch (error){
         console.log("ipfs image upload error: ", error)
       }
@@ -54,7 +58,7 @@ const Create = ({ marketplace, nft }) => {
     // mint nft 
     await(await nft.mint(uri)).wait()
     // get tokenId of new nft 
-    const id = await nft.tokenCount()
+  const id = await nft.tokenCount()
     // approve marketplace to spend nft
     await(await nft.setApprovalForAll(marketplace.address, true)).wait()
     // add nft to marketplace
